@@ -2,7 +2,7 @@
 
 A coach for human 2048 players. You play, and a strong engine grades every move: best, good, questionable or
 blunder. It also says why, can stop you before a blunder, and can play on from any position. No account, no payment.
-The web app is in [`app/`](app/README.md); the engine ("Afterstate") and the research behind it are the rest of this
+**Live at https://2048coach.com.** The web app is in [`app/`](app/README.md) (deployment: [`deploy/`](deploy/README.md)); the engine ("Afterstate") and the research behind it are the rest of this
 repo.
 
 **Not in this repo:**

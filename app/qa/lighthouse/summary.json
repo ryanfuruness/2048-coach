@@ -2,32 +2,33 @@
   {
     "page": "board",
     "preset": "mobile",
-    "performance": 99,
+    "performance": 98,
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
     "fcp": "1.1 s",
-    "lcp": "1.6 s",
-    "tbt": "70 ms",
+    "lcp": "1.3 s",
+    "tbt": "140 ms",
     "cls": "0",
-    "transfer": "Total size was 83 KiB",
+    "transfer": "Total size was 79 KiB",
     "below90": [
+      "max-potential-fid (0.86)",
       "network-dependency-tree-insight (0)",
-      "render-blocking-insight (0)"
+      "render-blocking-insight (0.5)"
     ]
   },
   {
     "page": "board",
     "preset": "desktop",
-    "performance": 100,
+    "performance": 99,
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "fcp": "0.3 s",
-    "lcp": "0.4 s",
+    "fcp": "0.7 s",
+    "lcp": "0.7 s",
     "tbt": "0 ms",
-    "cls": "0",
-    "transfer": "Total size was 83 KiB",
+    "cls": "0.007",
+    "transfer": "Total size was 78 KiB",
     "below90": [
       "network-dependency-tree-insight (0)",
       "render-blocking-insight (0.5)"
@@ -36,18 +37,20 @@
   {
     "page": "position-link",
     "preset": "mobile",
-    "performance": 100,
+    "performance": 97,
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "fcp": "1.1 s",
-    "lcp": "1.5 s",
-    "tbt": "70 ms",
+    "fcp": "1.4 s",
+    "lcp": "1.6 s",
+    "tbt": "50 ms",
     "cls": "0",
-    "transfer": "Total size was 83 KiB",
+    "transfer": "Total size was 78 KiB",
     "below90": [
+      "speed-index (0.8)",
+      "lcp-breakdown-insight (0)",
       "network-dependency-tree-insight (0)",
-      "render-blocking-insight (0)"
+      "render-blocking-insight (0.5)"
     ]
   },
   {
@@ -57,11 +60,11 @@
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "fcp": "0.3 s",
-    "lcp": "0.4 s",
-    "tbt": "0 ms",
+    "fcp": "0.5 s",
+    "lcp": "0.5 s",
+    "tbt": "30 ms",
     "cls": "0",
-    "transfer": "Total size was 83 KiB",
+    "transfer": "Total size was 78 KiB",
     "below90": [
       "network-dependency-tree-insight (0)",
       "render-blocking-insight (0.5)"
@@ -70,18 +73,19 @@
   {
     "page": "how",
     "preset": "mobile",
-    "performance": 100,
+    "performance": 98,
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "fcp": "1.2 s",
+    "fcp": "1.3 s",
     "lcp": "1.5 s",
-    "tbt": "0 ms",
+    "tbt": "10 ms",
     "cls": "0",
-    "transfer": "Total size was 82 KiB",
+    "transfer": "Total size was 77 KiB",
     "below90": [
+      "speed-index (0.83)",
       "network-dependency-tree-insight (0)",
-      "render-blocking-insight (0)"
+      "render-blocking-insight (0.5)"
     ]
   },
   {
@@ -91,11 +95,11 @@
     "accessibility": 100,
     "bestPractices": 100,
     "seo": 100,
-    "fcp": "0.3 s",
-    "lcp": "0.4 s",
+    "fcp": "0.5 s",
+    "lcp": "0.5 s",
     "tbt": "0 ms",
     "cls": "0",
-    "transfer": "Total size was 82 KiB",
+    "transfer": "Total size was 77 KiB",
     "below90": [
       "network-dependency-tree-insight (0)",
       "render-blocking-insight (0.5)"

@@ -2282,3 +2282,8 @@ Checks: QA 17/17.
     choice).
   - AWS resource IDs were redacted. The live values are in `scripts/aws/env.local.sh`, which is not committed.
   - Commit and push as the deployment proceeds.
+- **2026-10-11: LIVE at https://2048coach.com.**
+  - Server: netcup VPS (EPYC Genoa, 4 GB, US East), Caddy + systemd. Domain at Porkbun.
+  - Everything is in `deploy/` (README, setup.sh, push-weights.sh, the unit, the Caddyfile).
+  - Checked live: the 19 journeys, Lighthouse, a reboot, and that a spoofed X-Forwarded-For is ignored.
+  - Open: AAAA records (IPv6 untested), a snapshot, uptime monitoring.
