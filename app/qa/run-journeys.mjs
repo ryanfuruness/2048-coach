@@ -230,16 +230,22 @@ await journey('random-keys', async (open) => {
   return `14 random keys from a 2048 position: ${flagged} flagged (${grades.join(', ')}); the first after ${first + 1} moves`;
 });
 
-await journey('free-stretch', async (open) => {
-  // early on the corner is free: leaving it is not flagged
+await journey('early-corner', async (open) => {
+  // early on, leaving the corner is questionable (a habit), not a blunder: Warn me does not stop it
   const page = await open(DESKTOP);
   await page.goto(BASE + `/?board=${OPEN_128}&seed=2`, { waitUntil: 'networkidle' });
   await coachReady(page);
+  const bests = await page.locator('.mv .grade.best').count();
+  if (bests !== 1) throw new Error(`${bests} moves listed as Best (only the coach's should be)`);
+  await toggle(page, 'Warn me');
   await page.keyboard.press('ArrowDown');
   await graded(page, 1);
+  if (await page.locator('.modal.warn').count()) throw new Error('Warn me stopped an early corner move');
   const g = await gradeNow(page);
-  if (g === 'Questionable' || g === 'Blunder') throw new Error(`leaving the corner with a 128 graded ${g}`);
-  return `Down from a 128 opening (leaves the corner): "${g}"`;
+  const t = await gradeLineText(page);
+  if (g !== 'Questionable' || !/128 out of its corner/.test(t)) throw new Error(`leaving the corner with a 128: "${t}"`);
+  await toggle(page, 'Warn me');
+  return `one Best in the list; Down from a 128 opening: "${t}", no warning`;
 });
 
 await journey('coach-toggles', async (open) => {

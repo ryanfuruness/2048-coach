@@ -95,3 +95,45 @@ The app's QA journeys replay the same cases in the browser:
   repair. Structural rules catch it every time and come with a reason.
 - Test randomness must be real randomness. A linear congruential generator taken mod 4 pressed the same key 11 times,
   and it looked like the coach missed random play.
+
+## 2026-10-11: only the coach's move is Best; early habits are Questionable
+
+**Why.** The user's QA found random play graded 82 of 88 "Best". Early on every move is as good for the engine, so all
+of them were Best. And the engine's ranking can't separate them for a person (`results/worstmove/REPORT.md`).
+
+**Changes in `grade_moves`.**
+- **Best** is the coach's move only. A move just as good is Good.
+- **Early on (biggest tile 16-256):**
+  - Taking the biggest tile out of its corner, or pulling a big tile off the edge, is **Questionable**, not a blunder.
+    Warn me lets it pass.
+  - From 512 these are blunders, as before.
+- **New, at every stage from 16:** a move that leaves the biggest tile further from its nearest corner than a fine move
+  would is **Questionable**: "moves your 64 away from the corners".
+  - It catches random play, whose biggest tile drifts into the middle.
+  - A rule needing a move that reaches a corner fired on only 2% of random moves: in random play the biggest tile is
+    rarely one move from a corner.
+- **Below 16:** nothing to keep yet.
+
+**Results.**
+
+Random play from a new game (`scripts/random_play_check.py`, 12 games, about 1,400 moves):
+
+| biggest tile | best | good | questionable | blunder |
+|---|---|---|---|---|
+| below 32: before | 29% | 71% | 0% | 0% |
+| below 32: after | 29% | 60% | 11% | 0% |
+| 32-256: before (all equal moves Best) | (82 of 88 Best in the QA game) | | | |
+| 32-256: after | 30% | 45% | 23% | 2% |
+
+Real players' own moves, biggest tile 16-256 (`scripts/real_early_check.py`, 120 per cell):
+- Questionable: strong 8-11%, intermediate 4-16%, novice 14-26%.
+- Blunders: 0-1%.
+
+All stages (`check.txt` D), questionable: strong 2% (was 2%), intermediate 9% (8%), novice 27% (20%).
+
+The sanity cases are unchanged:
+- A 512+ tile taken out of its corner is a blunder 98-100% of the time.
+- Random keys are flagged 42-49% of the time, the first after 2-3 moves (at 256: 43%, was 30%).
+
+**Trade-off.** Random play still shows "Good" for about half its moves: the ones that don't move the biggest tile
+further from a corner. Being stricter would flag strong players' early moves more often (8-11% now).

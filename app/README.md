@@ -7,12 +7,12 @@ game stays in the browser.
 
 Since v3 (the second playtest) everything is built around the coach's **grade** of each move:
 
-- **Best:** the coach's move, or one just as good.
+- **Best:** the coach's move.
 - **Good:** fine, but the coach would play something else.
 - **Questionable:** the coach would never play it.
 - **Blunder:** an obvious, named mistake, such as your biggest tile out of its corner.
 
-The early game (largest tile up to 256) is free.
+Early on (largest tile 16 to 256), corner and edge slips are questionable rather than blunders. Warn me lets them pass.
 
 Four toggles replace the modes:
 - **Coach:** everything on or off.

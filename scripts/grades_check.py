@@ -82,7 +82,7 @@ for st in stages:
             if corner(a2) or max(a2) > max(b) or not keep: continue
             n += 1; bl += g[d]['grade'] == 'blunder'
             if g[d]['grade'] != 'blunder': miss.append((r['board'], d, g[d]['grade'], g[d].get('why', '')))
-    say(f"   {1 << st:5d}: {bl}/{n} = {100 * bl / max(1, n):.0f}%" + ('  (free stretch: not flagged by design)' if st <= 8 else '') +
+    say(f"   {1 << st:5d}: {bl}/{n} = {100 * bl / max(1, n):.0f}%" + ('  (early: questionable, not a blunder, by design)' if st <= 8 else '') +
         (f"   not blunders e.g. {miss[:2]}" if miss and st > 8 else ''))
 say('B. one random key from a real position: grade shares')
 for st in stages:

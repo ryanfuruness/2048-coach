@@ -13,7 +13,7 @@ export function How() {
           <dt>
             <span class="grade best">Best</span>
           </dt>
-          <dd>The coach's move, or one just as good.</dd>
+          <dd>The coach's move.</dd>
         </div>
         <div>
           <dt>
@@ -25,7 +25,7 @@ export function How() {
           <dt>
             <span class="grade questionable">Questionable</span>
           </dt>
-          <dd>The coach would never play it.</dd>
+          <dd>The coach would never play it, or it drifts your biggest tile away from the corners.</dd>
         </div>
         <div>
           <dt>
@@ -34,7 +34,7 @@ export function How() {
           <dd>An obvious mistake: your biggest tile out of its corner, a big tile pulled off the edge, or a move that can end the game.</dd>
         </div>
       </dl>
-      <p>Until your biggest tile reaches 512, the corner is free: moves there aren't graded for it.</p>
+      <p>Until your biggest tile reaches 512, corner and edge slips are questionable rather than blunders, and Warn me lets them pass.</p>
 
       <ul class="how-list">
         <li>

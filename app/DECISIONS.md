@@ -1,5 +1,17 @@
 # Design decisions (app v3, and v2 / v1 where still valid) and open questions
 
+## v3.6: grades that mean something early (2026-10-11)
+
+The QA pass found random play graded 82 of 88 "Best".
+- Only the coach's move is Best.
+- Early corner and edge slips are Questionable, not blunders (Warn me stays quiet).
+- At every stage from 16, a move that leaves the biggest tile further from a corner than a fine move would is
+  Questionable.
+- Random play now: 30% Best, 45% Good, about 25% flagged. Strong players' early moves: 8-11% Questionable.
+- A rank-based "least preferred" grade was checked and rejected: early on it is noise for a person.
+
+Details: `../results/grades/REPORT.md` (2026-10-11), `../results/worstmove/REPORT.md`.
+
 ## v3.5: fixes from the pre-launch QA pass (2026-10-11)
 
 - **Engine odds:** a note under the cards. They are the engine's odds if it played on from here, not yours. The engine

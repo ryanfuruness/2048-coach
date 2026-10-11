@@ -1,25 +1,25 @@
 A. biggest tile out of its corner (another move keeps it): share graded blunder
-     256: 0/135 = 0%  (free stretch: not flagged by design)
+     256: 0/135 = 0%  (early: questionable, not a blunder, by design)
      512: 149/152 = 98%   not blunders e.g. [('0000001401581439', 'U', 'best', ''), ('0012000412545639', 'U', 'best', '')]
     1024: 150/150 = 100%
     2048: 168/168 = 100%
     4096: 164/166 = 99%   not blunders e.g. [('c131941036000000', 'D', 'best', ''), ('7abc689253302110', 'D', 'best', '')]
     8192: 163/164 = 99%   not blunders e.g. [('db2924a801641010', 'D', 'best', '')]
 B. one random key from a real position: grade shares
-     256: n 250  best   55%  good   25%  questionable   20%  blunder    0%  -> flagged   20%
-     512: n 250  best   50%  good   12%  questionable   13%  blunder   26%  -> flagged   38%
-    1024: n 250  best   60%  good   13%  questionable    4%  blunder   24%  -> flagged   27%
-    2048: n 250  best   58%  good    7%  questionable    6%  blunder   30%  -> flagged   36%
-    4096: n 250  best   60%  good    6%  questionable    7%  blunder   26%  -> flagged   33%
-    8192: n 250  best   59%  good    7%  questionable    6%  blunder   28%  -> flagged   34%
+     256: n 250  best   36%  good   26%  questionable   37%  blunder    0%  -> flagged   37%
+     512: n 250  best   30%  good   31%  questionable   13%  blunder   26%  -> flagged   39%
+    1024: n 250  best   32%  good   40%  questionable    5%  blunder   24%  -> flagged   28%
+    2048: n 250  best   27%  good   36%  questionable    7%  blunder   30%  -> flagged   36%
+    4096: n 250  best   27%  good   40%  questionable    7%  blunder   26%  -> flagged   33%
+    8192: n 250  best   32%  good   34%  questionable    6%  blunder   28%  -> flagged   34%
 C. 15 random keys in a row: share flagged per move, and moves until the first flag
-     256: moves  879  flagged   30% (blunders    2%)  first flag after 3 moves (median), within 5 moves in 73% of runs
-     512: moves  811  flagged   43% (blunders   18%)  first flag after 3 moves (median), within 5 moves in 80% of runs
-    1024: moves  794  flagged   41% (blunders   19%)  first flag after 2 moves (median), within 5 moves in 82% of runs
-    2048: moves  801  flagged   46% (blunders   22%)  first flag after 3 moves (median), within 5 moves in 87% of runs
-    4096: moves  759  flagged   47% (blunders   21%)  first flag after 2 moves (median), within 5 moves in 88% of runs
-    8192: moves  766  flagged   42% (blunders   21%)  first flag after 2 moves (median), within 5 moves in 80% of runs
+     256: moves  879  flagged   43% (blunders    2%)  first flag after 2 moves (median), within 5 moves in 93% of runs
+     512: moves  811  flagged   46% (blunders   18%)  first flag after 3 moves (median), within 5 moves in 82% of runs
+    1024: moves  794  flagged   42% (blunders   19%)  first flag after 2 moves (median), within 5 moves in 82% of runs
+    2048: moves  801  flagged   47% (blunders   22%)  first flag after 3 moves (median), within 5 moves in 87% of runs
+    4096: moves  759  flagged   49% (blunders   21%)  first flag after 2 moves (median), within 5 moves in 88% of runs
+    8192: moves  766  flagged   43% (blunders   21%)  first flag after 2 moves (median), within 5 moves in 80% of runs
 D. real players (reference only): grade shares of the move they played
-   novice       n   74  best   62%  good   19%  questionable   16%  blunder   2.7%
-   intermediate n  619  best   77%  good   14%  questionable    8%  blunder   0.5%
-   strong       n  767  best   90%  good    7%  questionable    2%  blunder   0.9%
+   novice       n   74  best   42%  good   28%  questionable   27%  blunder   2.7%
+   intermediate n  619  best   55%  good   36%  questionable    9%  blunder   0.5%
+   strong       n  767  best   56%  good   41%  questionable    2%  blunder   0.9%

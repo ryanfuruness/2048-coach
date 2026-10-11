@@ -803,9 +803,9 @@ static CoachPick coach_pick(const Analysis& A, const ChanceView& C, const hm::Hi
 }
 
 // MOVE GRADES (2026-10-10, the user's simplification; results/grades/REPORT.md): what an app shows for every move.
-//   best          the coach's move, or one the engine cannot tell from it (value loss below 0.5%: a deeper search picks
-//                 such moves about 1 time in 4)
-//   good          fine, but the coach would play something else (value loss 0.5-5%)
+//   best          the coach's move (only it: early on every move is as good for the engine, and "Best" on all of them
+//                 says nothing - the user's QA, 2026-10-11)
+//   good          fine, but the coach would play something else (value loss below 5%)
 //   questionable  the coach would never play it: value loss 5%+ (a deeper search picks such moves 2% of the time or
 //                 less; 10%+ from 16384, where the engine's values overstate small losses), or it pulls a big tile
 //                 (a quarter of the biggest) off the edge while a fine move keeps it there
@@ -814,8 +814,12 @@ static CoachPick coach_pick(const Analysis& A, const ChanceView& C, const hm::Hi
 //                 new tiles end the game while another move is at least 10 points safer; or the engine measures a big
 //                 loss (real loss 10%+). Judged by the board, not by the engine's value: the engine repairs a 2048 out
 //                 of its corner and calls it cheap, a person does not.
-// The free stretch (largest tile up to 256): no corner or edge verdicts - early on such moves cost nothing, even for
-// human-like players (results/yc/REPORT.md) - only danger and big losses.
+// Early on (largest tile 16 to 256) the corner and edge breaks are questionable, not blunders: a habit to learn, not
+// yet a cost (they cost human-like players about nothing until 256, results/yc/REPORT.md), and Warn me stays quiet.
+// At every stage from 16 on, a move that leaves the biggest tile further from a corner than a fine move would is
+// questionable (random play: ~18% of moves; strong players: ~3%). Below 16 there is no corner to keep. The engine's
+// ranking of near-equal moves is no guide early (its least preferred move is no worse for a human player up to 256,
+// results/worstmove/REPORT.md), so early grades come from these board rules.
 // pick: how often the coach would play the move, from the engine's uncertainty: exp(-value loss / 0.015), normalized
 // (fitted to which move a depth-5 search prefers on 2,400 real positions); the coach's move gets the top share.
 // hint_cells: where the coach's move acts on the current board (its largest merge, else the plan's next cell);
@@ -828,7 +832,7 @@ struct Grade {
   vector<int> hint_cells, fault_cells;
 };
 static Grade cur_grades[4];
-static const double kGoodRel = 0.005, kNeverRel = 0.05, kNeverRelLate = 0.10, kPickTau = 0.015;
+static const double kNeverRel = 0.05, kNeverRelLate = 0.10, kPickTau = 0.015;
 struct MergeAt {
   int a, b, target, rank;  // the merging cells, the cell the new tile lands on, its rank
 };
@@ -875,19 +879,28 @@ static vector<int> deadly_cells(board_t a) {
   }
   return out;
 }
+// steps from the biggest tile (the nearest one, when several) to its nearest corner: 0 in a corner, 2 in the middle
+static int corner_dist(board_t b) {
+  int top = bb::max_rank(b), best = 9;
+  for (int c = 0; c < 16; c++)
+    if (bb::cell(b, c) == top) best = std::min(best, std::min(c / 4, 3 - c / 4) + std::min(c % 4, 3 - c % 4));
+  return best;
+}
 static void grade_moves(const Analysis& A, int coach, Grade out[4]) {
   for (int d = 0; d < 4; d++) out[d] = Grade();
   int bv = best_legal(A);
   if (bv < 0 || not_judged(A)) return;
   board_t b = A.board;
   int top = bb::max_rank(b), top_real = ex::display_rank[top];
-  bool free_stretch = top_real <= 8;
+  bool early = top_real <= 8;     // up to 256: corner and edge breaks are questionable
+  bool too_early = top_real < 4;  // below 16: no corner to keep yet
   double never = top_real >= 14 ? kNeverRelLate : kNeverRel;
   string tile = to_string(1L << top_real);
   bool corner_now = hp::max_in_corner(b);
   size_t edge_now = big_off_edge_cells(b).size();
   double rel[4], rl[4], death[4];
   bool corner_lost[4] = {}, edge_lost[4] = {};
+  int cdist[4] = {};  // after each move: the biggest tile's distance (steps) to its nearest corner
   for (int d = 0; d < 4; d++) {
     if (!A.mv[d].legal) continue;
     board_t a = A.mv[d].after;
@@ -898,6 +911,7 @@ static void grade_moves(const Analysis& A, int coach, Grade out[4]) {
     bool same_top = bb::max_rank(a) == top;  // a move that makes a new biggest tile is judged by its merge, not its corner
     corner_lost[d] = same_top && corner_now && !hp::max_in_corner(a);
     edge_lost[d] = same_top && big_off_edge_cells(a).size() > edge_now;
+    cdist[d] = corner_dist(a);
   }
   auto fine = [&](int f) { return A.mv[f].legal && rel[f] < never && death[f] < 0.02; };
   auto avoidable = [&](int d, const bool* defect) {
@@ -920,22 +934,30 @@ static void grade_moves(const Analysis& A, int coach, Grade out[4]) {
     vector<int> off = edge_lost[d] ? big_off_edge_cells(a) : vector<int>();
     int off_rank = 0;
     for (int c : off) off_rank = std::max(off_rank, (int)bb::cell(a, c));
-    bool edge_avoidable = !free_stretch && edge_lost[d] && avoidable(d, edge_lost);
+    bool edge_avoidable = !too_early && edge_lost[d] && avoidable(d, edge_lost);
+    bool corner_avoidable = !too_early && corner_lost[d] && avoidable(d, corner_lost);
+    // the biggest tile ends up further from a corner than a fine move would leave it (the cheap habit check that also
+    // catches random play, whose biggest tile drifts into the middle: results/grades/REPORT.md, 2026-10-11)
+    bool same_top_d = bb::max_rank(a) == top;
+    int best_dist = 99;
+    for (int f = 0; f < 4; f++)
+      if (fine(f)) best_dist = std::min(best_dist, cdist[f]);
+    bool corner_drift = !too_early && same_top_d && cdist[d] > best_dist;
     if (death[d] >= 0.10 && safest <= death[d] - 0.10) {
       g.grade = "blunder";
       char buf[96];
       snprintf(buf, sizeof buf, "can end the game: %.0f%% of new tiles leave no move", 100 * death[d]);
       g.why = buf;
       g.fault_cells = deadly_cells(a);
-    } else if (!free_stretch && corner_lost[d] && avoidable(d, corner_lost)) {
-      g.grade = "blunder";
+    } else if (corner_avoidable) {
+      g.grade = early ? "questionable" : "blunder";
       g.why = "takes your " + tile + " out of its corner";
       for (int c = 0; c < 16; c++)
         if (bb::cell(a, c) == top && !is_corner(c)) g.fault_cells.push_back(c);
       for (int c : {0, 3, 12, 15})
         if (bb::cell(b, c) == top) g.fault_cells.push_back(c);
     } else if (edge_avoidable && off_rank >= top - 1) {
-      g.grade = "blunder";
+      g.grade = early ? "questionable" : "blunder";
       g.why = "pulls your " + to_string(1L << ex::display_rank[off_rank]) + " off the edge";
       g.fault_cells = off;
     } else if (rl[d] >= 0.10) {
@@ -946,12 +968,17 @@ static void grade_moves(const Analysis& A, int coach, Grade out[4]) {
       g.grade = "questionable";
       g.why = "pulls your " + to_string(1L << ex::display_rank[off_rank]) + " off the edge";
       g.fault_cells = off;
+    } else if (corner_drift) {
+      g.grade = "questionable";
+      g.why = (cdist[d] > corner_dist(b) ? "moves your " : "leaves your ") + tile + " away from the corners";
+      for (int c = 0; c < 16; c++)
+        if (bb::cell(a, c) == bb::max_rank(a)) g.fault_cells.push_back(c);
     } else if (rel[d] >= never) {
       g.grade = "questionable";
       if (rs.empty()) rs = reasons(A);
       if (!rs[d].empty()) g.why = rs[d][0].text;
     } else {
-      g.grade = rel[d] >= kGoodRel ? "good" : "best";
+      g.grade = "good";
     }
   }
   // the coach's share of each move
@@ -1553,8 +1580,8 @@ static int selftest(EngineThread& T, const Engine& E) {
   }
   // 12. move grades (app v3): the user's sanity cases. With a 2048 in its corner, a move that takes it out is a
   // blunder (the engine calls it cheap); pulling the 2048 next to a 4096 off the edge is one too; a move that lets most
-  // new tiles end the game is one; in the free stretch (largest tile up to 256) leaving the corner is not flagged; the
-  // coach's move is best and gets the top share; warnings are the blunders
+  // new tiles end the game is one; early on (largest tile up to 256) leaving the corner is questionable, not a blunder;
+  // only the coach's move is best, and it gets the top share; warnings are the blunders
   {
     hm::History hist;
     auto graded = [&](const char* bs) {
@@ -1578,8 +1605,12 @@ static int selftest(EngineThread& T, const Engine& E) {
     graded("2 4 16 2 / 8 32 64 4 / 16 128 512 8 / 4 2 256 0");
     check(g_of(1) == "blunder" && cur_grades[1].why.find("end the game") != string::npos && !cur_grades[1].fault_cells.empty(),
           "grades: a move after which most new tiles end the game is a blunder, with the deadly cells");
-    graded("128 64 16 4 / 8 4 2 0 / 2 0 0 0 / 0 0 0 0");
-    check(g_of(2) != "blunder" && g_of(2) != "questionable", "grades: leaving the corner in the free stretch is not flagged");
+    auto [A4, c4] = graded("128 64 16 4 / 8 4 2 0 / 2 0 0 0 / 0 0 0 0");
+    check(g_of(2) == "questionable" && cur_grades[2].why.find("out of its corner") != string::npos,
+          "grades: leaving the corner early (a 128) is questionable, not a blunder");
+    int bests = 0;
+    for (int d = 0; d < 4; d++) bests += g_of(d) == "best";
+    check(bests == 1 && g_of(c4) == "best", "grades: only the coach's move is best");
   }
   // 13. your chance (workstream yc): chances in [0, 1], the best move for the player loses nothing and the chance from
   // here is at most that; in the opening the coach keeps the biggest tile in its corner where the engine's move would
