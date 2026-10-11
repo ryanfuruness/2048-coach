@@ -1944,6 +1944,20 @@ kbd.on-accent {
   flex-wrap: wrap;
   gap: 4px 8px;
 }
+.credits {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.credits h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
 .linklike.gl-why-open {
   font-size: 13.5px;
 }

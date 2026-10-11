@@ -13,7 +13,7 @@ repo.
 
 Without the networks the engine builds and its tests run, but it can't analyze positions.
 
-License: [MIT](LICENSE).
+License: [MIT](LICENSE). Acknowledgements: [below](#acknowledgements).
 
 ## Afterstate, the engine
 
@@ -250,3 +250,21 @@ Search options: `--depth D`, `--budget N` (leaf evaluations per move for iterati
 least K locked tiles) with `--endgame-full 1|2`, `--endgame-min P`, `--endgame-dir DIR`. Analysis: `--analyze HEX` prints move values at each depth for one
 board; `--disagree N` prints positions where depth 1 and depth 2 choose differently; `--stop-sum S`
 ends games at a tile sum (to measure one stage); `--start pool.bin` starts from recorded positions.
+
+## Acknowledgements
+
+- **The game:** 2048 is [Gabriele Cirulli's game](https://github.com/gabrielecirulli/2048). The app reimplements its
+  rules.
+- **N-tuple networks and TD learning for 2048:** M. Szubert and W. Jaśkowski, "Temporal Difference Learning of N-Tuple
+  Networks for the Game 2048", IEEE CIG 2014. They introduced learning afterstate values, which gives the engine its
+  name.
+- **The tuple set:** K. Oka and K. Matsuzaki, "Systematic Selection of N-Tuple Networks for 2048", 2016. These are the
+  8×6 patterns the networks use, taken from Hung Guei's TDL2048+.
+- **Optimistic TD learning:** H. Guei, L.-P. Chen and I.-C. Wu, "Optimistic Temporal Difference Learning for 2048",
+  [arXiv:2111.11090](https://arxiv.org/abs/2111.11090), 2022. It gives the training schedule
+  behind the strongest networks, and their results are a benchmark here.
+- **[macroxue/2048-ai](https://github.com/macroxue/2048-ai):**
+  - The idea of exact endgame lookup tables and the 3×2 block formation. The implementation here is independent.
+  - During research it served as an outside judge for checking moves. None of its (GPL) code is in this repository.
+- **Human play:** the model of how people play was learned from public YouTube videos of human games. The dataset is
+  not published.

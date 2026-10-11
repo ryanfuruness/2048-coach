@@ -56,6 +56,28 @@ export function How() {
 
       <p class="muted small">No account: your game stays in this browser. To grade a position, the board is sent to the analysis server.</p>
 
+      <section class="credits" aria-labelledby="credits-title">
+        <h2 id="credits-title">Credits</h2>
+        <p>
+          2048 is{' '}
+          <a href="https://github.com/gabrielecirulli/2048" rel="noopener">
+            Gabriele Cirulli's game
+          </a>
+          . The engine builds on research by Szubert &amp; Jaśkowski (n-tuple networks and TD learning for 2048), Oka &amp; Matsuzaki (the tuple
+          set), Guei, Chen &amp; Wu (optimistic TD learning) and{' '}
+          <a href="https://github.com/macroxue/2048-ai" rel="noopener">
+            macroxue's 2048-ai
+          </a>{' '}
+          (the idea of exact endgame tables). How people play was learned from public videos of human games.
+        </p>
+        <p>
+          <a href="https://github.com/ryanfuruness/2048-coach" rel="noopener">
+            Source on GitHub
+          </a>{' '}
+          (MIT license).
+        </p>
+      </section>
+
       <div class="how-cta">
         <Link href="/" class="btn primary big">
           To the board
