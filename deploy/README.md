@@ -42,7 +42,7 @@ cd app && node qa/run-journeys.mjs --base https://2048coach.com && node qa/run-l
 
 - All 19 browser journeys pass against https://2048coach.com.
 - Lighthouse: 100 for accessibility, best practices and SEO; 98-100 for performance (one mobile run at 89 was noise).
-- An analysis takes 1-5 ms on the server. From far away the network adds the rest (~0.2 s from the UAE).
+- An analysis takes 1-5 ms on the server. The network adds the rest (~0.2 s for a user ~190 ms away; far less within the US).
 - After a reboot the site is back in ~15 s.
 
 ## Open
