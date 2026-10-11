@@ -1,0 +1,10 @@
+{
+  "name": "2048 Coach",
+  "short_name": "2048 Coach",
+  "description": "Play 2048 with a coach that warns you before big mistakes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f5f1",
+  "theme_color": "#f6f5f1",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

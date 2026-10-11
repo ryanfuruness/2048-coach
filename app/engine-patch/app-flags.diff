@@ -1,0 +1,125 @@
+--- app/engine-patch/analyze.cpp.orig	2026-10-07 10:00:43.717102001 +0400
++++ src/analyze.cpp	2026-10-07 10:11:44.658335062 +0400
+@@ -3,11 +3,14 @@
+ //   build/analyze --preset best [engine flags] [--depth D] [--json] BOARD...   analyze positions
+ //   build/analyze --preset best --stdin                                       one board per input line -> one JSON line
+ //                                                                              (a line may start with options and '|':
+-//                                                                              "depth=4 risk=1 line=10 | BOARD")
++//                                                                              "depth=4 risk=1 line=10 | BOARD"; with
++//                                                                              --stdin-player also "skill=-0.5 hist=LDR")
+ //   build/analyze --preset best --review FILE [--json]                         review a game: FILE holds consecutive
+ //                                                                              boards, one per line; the moves between
+ //                                                                              two boards are inferred (up to --max-gap
+ //                                                                              moves, default 3, for skipped frames)
++//                                                                              (--review-moves: "BOARD U" lines give
++//                                                                              the move played from a board)
+ // A BOARD is 16 tile values (row by row, 0 = empty, any separators) or 16 hex rank digits. --preset best-notables
+ // runs without the 88 GB of exact tables. Values are in points: the move's merge reward plus the expected future
+ // reward with the engine playing on (expectimax at the engine's depth over the network's values). Loss = best value -
+@@ -963,6 +966,14 @@
+   board_t board;
+   int move;
+ };
++// Does move d from board a, followed by one new tile, give board b? (--review-moves: the move given with a frame)
++static bool move_explains(board_t a, int d, board_t b) {
++  board_t m = bb::move(a, d), diff = m ^ b;
++  if (m == a || !diff) return false;
++  int c = __builtin_ctzll(diff) / 4;
++  if (diff >> (4 * c) >> 4) return false;
++  return bb::cell(m, c) == 0 && (bb::cell(b, c) == 1 || bb::cell(b, c) == 2);
++}
+ static vector<Step> infer_path(board_t a, board_t b, int max_k = 3) {
+   struct Node {
+     board_t s;
+@@ -1233,6 +1244,8 @@
+   Engine E;
+   E.cfg.preset_best(".", true);
+   bool json = false, use_stdin = false, no_calib = false, want_selftest = false;
++  bool stdin_player = false;  // --stdin-player: per-line skill= and hist= options in --stdin mode (app/server)
++  bool review_moves = false;  // --review-moves: a review frame may name the move played from it (app/server)
+   int depth = 0, max_gap = 3;
+   string review;
+   vector<string> boards;
+@@ -1248,6 +1261,8 @@
+     } else if (E.cfg.parse(i, argc, argv)) {
+     } else if (a == "--json") json = true;
+     else if (a == "--stdin") use_stdin = true, json = true;
++    else if (a == "--stdin-player") stdin_player = true;
++    else if (a == "--review-moves") review_moves = true;
+     else if (a == "--review" && i + 1 < argc) review = argv[++i];
+     else if (a == "--risk" && i + 1 < argc) risk_depth = stoi(argv[++i]);
+     else if (a == "--features") want_features = true;
+@@ -1330,14 +1345,24 @@
+     }
+     vector<board_t> seq;
+     vector<array<int, 16>> seq_map;  // each frame's display map (games that reach 65536 change it along the way)
++    vector<int> seq_move;            // --review-moves: the move played from each frame ("BOARD U"), -1 if none given
+     char line[4096];
+     while (fgets(line, sizeof line, f)) {
++      int given = -1;
++      if (review_moves) {  // a last token U/R/D/L after the board names the move played from it
++        size_t e = strlen(line);
++        while (e > 0 && isspace((unsigned char)line[e - 1])) e--;
++        if (e >= 2 && isspace((unsigned char)line[e - 2]))
++          for (int d = 0; d < 4; d++)
++            if (line[e - 1] == kDirChar[d]) given = d, line[e - 1] = ' ';
++      }
+       board_t b;
+       if (parse_board(line, &b)) {
+         seq.push_back(b);
+         array<int, 16> m;
+         for (int r = 0; r < 16; r++) m[r] = g_display_rank[r];
+         seq_map.push_back(m);
++        seq_move.push_back(given);
+       }
+     }
+     fclose(f);
+@@ -1352,7 +1377,10 @@
+         same++;
+         continue;
+       }
+-      vector<Step> p = infer_path(seq[i], seq[i + 1], max_gap);
++      vector<Step> p;
++      if (seq_move[i] >= 0 && move_explains(seq[i], seq_move[i], seq[i + 1]))
++        p.push_back(Step{seq[i], seq_move[i]});  // the given move: an app knows it (0.7% of frame pairs are ambiguous)
++      else p = infer_path(seq[i], seq[i + 1], max_gap);
+       if (p.empty()) {
+         unknown++;
+         if (getenv("DEBUG_INFER")) fprintf(stderr, "no path: %s -> %s\n", board_hex(seq[i]).c_str(), board_hex(seq[i + 1]).c_str());
+@@ -1721,8 +1749,15 @@
+     // each line: a board, optionally preceded by per-request options and '|': "depth=4 risk=1 line=10 | 2 4 0 ..."
+     string line;
+     const int depth0 = depth, risk0 = risk_depth, line0 = line_len;
++    // with --stdin-player (app/server), a line may also carry the player: "skill=-0.5 hist=LDDRL | BOARD" - the skill
++    // on the human move model's scale (as --skill, for this line only) and the player's recent moves, oldest first
++    // (the human model's history, as reviews fill it; the last hm::History::kLen count). Without the flag, both keys
++    // are ignored as before.
++    const double theta0 = human_theta;
+     while (getline(cin, line)) {
+       depth = depth0, risk_depth = risk0, line_len = line0;
++      human_theta = theta0;
++      string hist_moves;
+       int played = -1;  // "played=U": the move the player made (echoed in the JSON, for batch reviews)
+       size_t bar = line.find('|');
+       if (bar != string::npos) {
+@@ -1740,6 +1775,10 @@
+           } else if (k == "depth") depth = min(max(v, 0), 6);  // depth 7-8 on an open board takes minutes
+           else if (k == "risk") risk_depth = min(max(v, 0), 3);
+           else if (k == "line") line_len = min(max(v, 0), 200);
++          else if (stdin_player && k == "skill") {
++            double t = atof(kv.c_str() + eq + 1);
++            if (std::isfinite(t)) human_theta = min(max(t, -3.0), 3.0);  // the human model's skill grid
++          } else if (stdin_player && k == "hist") hist_moves = kv.substr(eq + 1);
+         }
+         line = line.substr(bar + 1);
+       }
+@@ -1751,6 +1790,9 @@
+       }
+       T.reset_search();  // requests are independent: same answer, same cost, whatever came before
+       cur_hist.clear();
++      for (char c : hist_moves)
++        for (int d = 0; d < 4; d++)
++          if (c == kDirChar[d] || c == kDirChar[d] + 32) cur_hist.push(d);
+       run(b, played);
+     }
+     return 0;

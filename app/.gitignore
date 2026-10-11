@@ -1,0 +1,5 @@
+node_modules/
+web/dist/
+qa/lighthouse/*.json
+!qa/lighthouse/summary.json
+.server.pid

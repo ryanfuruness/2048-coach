@@ -1,0 +1,30 @@
+# secrets: never commit
+.env
+.env.*
+*.pem
+*.key
+.claude/
+
+# big or generated: weights (242 GB; the serving files go in a GitHub Release), builds, run outputs
+weights/
+build/
+build_*/
+results/**
+!results/**/
+!results/**/*.md
+!results/grades/check.txt
+
+# the human games dataset (moves read from YouTube videos, with channel names): not published for now
+data/
+
+# app
+node_modules/
+app/web/dist/
+app/qa/lighthouse/*.json
+!app/qa/lighthouse/summary.json
+app/.server.pid
+__pycache__/
+*.pyc
+app/qa/lighthouse/*.html
+scripts/aws/env.local.sh
+app/engine-patch/*.bin.orig

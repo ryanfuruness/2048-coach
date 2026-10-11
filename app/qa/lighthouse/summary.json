@@ -1,0 +1,104 @@
+[
+  {
+    "page": "board",
+    "preset": "mobile",
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "fcp": "1.1 s",
+    "lcp": "1.6 s",
+    "tbt": "70 ms",
+    "cls": "0",
+    "transfer": "Total size was 83 KiB",
+    "below90": [
+      "network-dependency-tree-insight (0)",
+      "render-blocking-insight (0)"
+    ]
+  },
+  {
+    "page": "board",
+    "preset": "desktop",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "fcp": "0.3 s",
+    "lcp": "0.4 s",
+    "tbt": "0 ms",
+    "cls": "0",
+    "transfer": "Total size was 83 KiB",
+    "below90": [
+      "network-dependency-tree-insight (0)",
+      "render-blocking-insight (0.5)"
+    ]
+  },
+  {
+    "page": "position-link",
+    "preset": "mobile",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "fcp": "1.1 s",
+    "lcp": "1.5 s",
+    "tbt": "70 ms",
+    "cls": "0",
+    "transfer": "Total size was 83 KiB",
+    "below90": [
+      "network-dependency-tree-insight (0)",
+      "render-blocking-insight (0)"
+    ]
+  },
+  {
+    "page": "position-link",
+    "preset": "desktop",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "fcp": "0.3 s",
+    "lcp": "0.4 s",
+    "tbt": "0 ms",
+    "cls": "0",
+    "transfer": "Total size was 83 KiB",
+    "below90": [
+      "network-dependency-tree-insight (0)",
+      "render-blocking-insight (0.5)"
+    ]
+  },
+  {
+    "page": "how",
+    "preset": "mobile",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "fcp": "1.2 s",
+    "lcp": "1.5 s",
+    "tbt": "0 ms",
+    "cls": "0",
+    "transfer": "Total size was 82 KiB",
+    "below90": [
+      "network-dependency-tree-insight (0)",
+      "render-blocking-insight (0)"
+    ]
+  },
+  {
+    "page": "how",
+    "preset": "desktop",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "fcp": "0.3 s",
+    "lcp": "0.4 s",
+    "tbt": "0 ms",
+    "cls": "0",
+    "transfer": "Total size was 82 KiB",
+    "below90": [
+      "network-dependency-tree-insight (0)",
+      "render-blocking-insight (0.5)"
+    ]
+  }
+]
