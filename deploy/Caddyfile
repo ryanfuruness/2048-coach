@@ -1,0 +1,10 @@
+# Caddy: HTTPS (automatic certificates) in front of the app server on 127.0.0.1:8048. Installed by deploy/setup.sh.
+# No access log: the app logs its API requests itself (without bodies).
+2048coach.com {
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy 127.0.0.1:8048
+}
+
+www.2048coach.com {
+	redir https://2048coach.com{uri} permanent
+}
