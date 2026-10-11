@@ -2274,3 +2274,11 @@ Done:
 - Space and P are guarded with the coach off.
 
 Checks: QA 17/17.
+
+- **2026-10-11: public repo.** https://github.com/ryanfuruness/2048-coach (MIT, branch main). Commits use the GitHub
+  noreply email (repo-local git config).
+  - Left out by `.gitignore`: `.env` and keys, `weights/` (the serving files go in a GitHub Release at deploy time),
+    `build*/`, run outputs (`results/` keeps `*.md`), and `data/` (the YouTube human-games dataset, by the user's
+    choice).
+  - AWS resource IDs were redacted. The live values are in `scripts/aws/env.local.sh`, which is not committed.
+  - Commit and push as the deployment proceeds.
