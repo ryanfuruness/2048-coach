@@ -45,18 +45,23 @@ interface Prompt {
   best: Dir;
 }
 
+/** what to say about the page's link once the board shows (a position link that could not be read) */
+let linkNote: string | null = null;
+
 /** The line at page load: a position from the URL (?board=...&seed=...), else the saved line, else a new game. */
 function initialWorkbench(speed: Speed): Workbench {
   const q = new URLSearchParams(location.search);
   const seed = q.get('seed');
   const rng = seed !== null && /^\d{1,15}$/.test(seed) ? Sfc32.fromNumber(Number(seed)) : cryptoRng();
   const boardParam = q.get('board');
+  linkNote = null;
   if (location.pathname !== '/' || location.search) history.replaceState(null, '', '/');
   const saved = loadLineRecord();
   let line: Line | null = null;
   if (boardParam) {
     const b = fromBoardCode(boardParam) ?? parseBoard(boardParam);
     if (b && b.some((v) => v > 0) && distinctRanks(b) <= 15) line = Line.fresh(b, 'position', rng);
+    else linkNote = "That position link isn't valid.";
   }
   if (!line && seed === null && saved) {
     try {
@@ -178,6 +183,11 @@ export function Dojo() {
       document.removeEventListener('visibilitychange', f);
     };
   }, [wb]);
+
+  useEffect(() => {
+    if (linkNote) showToast(linkNote);
+    linkNote = null;
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -519,7 +529,7 @@ export function Dojo() {
   if (hlOn && !edit && !fastAuto && isFlagged(lastGrade)) for (const c of lastMove?.fault_cells ?? []) marks.push({ cell: c, tone: 'fault' });
 
   // ---- the grade of the last move, in one line under the board ----
-  const gradeLine = () => {
+  const gradeContent = () => {
     if (!gradesOn || edit) return null;
     if (lastDir === null) return n === 0 ? <span class="muted">Make a move: the coach grades it here.</span> : null;
     const who = line.author(k - 1);
@@ -572,6 +582,24 @@ export function Dojo() {
           )}
         </span>
         {undo}
+      </>
+    );
+  };
+
+  // stepped back in the game: the line grades the move that led here, while the board and the panel are about the
+  // next one, so it names the move
+  const gradeLine = () => {
+    const c = gradeContent();
+    if (!c || lastDir === null || k === n || line.author(k - 1) === 'c') return c;
+    return (
+      <>
+        <span class="gl-played">
+          You played{' '}
+          <b>
+            {arrowOf(lastDir)} {cap(DIR_NAMES[lastDir])}
+          </b>
+        </span>
+        {c}
       </>
     );
   };
@@ -730,6 +758,12 @@ export function Dojo() {
                 Engine odds
               </button>
               {st.odds && <OddsCards odds={odds} />}
+              {st.odds && (
+                <p class="muted small odds-note">
+                  The engine's odds if it played on from here, not yours. It can rescue almost any early position, so these stay high until late in the
+                  game.
+                </p>
+              )}
             </div>
           )}
           {!edit && autoplay}
@@ -788,7 +822,7 @@ export function Dojo() {
                   <div class="over-card">
                     <h2>Game over</h2>
                     <p>
-                      {int(line.score())} points · best tile {tileValue(line.tops[k])}
+                      {line.score() > 0 ? `${int(line.score())} points · ` : ''}best tile {tileValue(line.tops[k])}
                     </p>
                     {counts && (counts.blunder > 0 || counts.questionable > 0) && (
                       <p class="over-counts">

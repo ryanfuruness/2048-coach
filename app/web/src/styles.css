@@ -83,8 +83,6 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* the page does not move sideways when content grows past the window and a scrollbar appears */
-  scrollbar-gutter: stable;
 }
 
 body {
@@ -1916,6 +1914,35 @@ kbd.on-accent {
   .panel.coach .options {
     order: 10;
   }
+}
+.gl-played {
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.gl-played b {
+  color: var(--ink);
+  font-weight: 650;
+}
+.odds-note {
+  margin: 0;
+  line-height: 1.45;
+}
+/* phone in landscape: the board fits the height, so all of it can be swiped */
+@media (max-width: 959px) and (orientation: landscape) and (max-height: 600px) {
+  .dojo {
+    --board-size: max(200px, min(calc(100vw - 32px), 460px, calc(100dvh - 150px)));
+  }
+  .bench {
+    width: min(calc(100vw - 32px), 460px);
+  }
+  .bench .board-row {
+    justify-content: center;
+  }
+}
+/* stepped back: "You played" and the grade wrap as one line of text */
+.gl-body:has(.gl-played) {
+  flex-wrap: wrap;
+  gap: 4px 8px;
 }
 .linklike.gl-why-open {
   font-size: 13.5px;

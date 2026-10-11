@@ -1,5 +1,19 @@
 # Design decisions (app v3, and v2 / v1 where still valid) and open questions
 
+## v3.5: fixes from the pre-launch QA pass (2026-10-11)
+
+- **Engine odds:** a note under the cards. They are the engine's odds if it played on from here, not yours. The engine
+  can rescue almost any early position, so they stay high until late in the game.
+- **Link previews:** Open Graph and Twitter card tags, with a 1200x630 image (`web/public/og.png`). Also an
+  apple-touch-icon and PNG icons in the manifest. All are rendered by `scripts/brand-images.mjs` from
+  `qa/brand/*.html`.
+- **Stepping back:** the line under the board starts with "You played ↓ Down". Otherwise it reads as if it were about
+  the next move, which the board and the panel show.
+- **Dialogs:** removed `scrollbar-gutter: stable`, which left an undimmed strip beside every dialog on Windows. The
+  board page fits the window, so nothing shifts.
+- **Phone landscape:** the board fits the height (min 200 px), so all of it can be swiped.
+- **A bad `?board=` link:** "That position link isn't valid." A game over opened from a link no longer says "0 points".
+
 ## v3.4: no green highlight; a blocked chain is a warning (2026-10-10)
 
 Measured first (`../results/plancell/REPORT.md`, 1,200 real positions, the coach playing on).

@@ -1,137 +1,137 @@
 {
-  "at": "2026-10-11T14:20:48.959Z",
-  "base": "https://2048coach.com",
+  "at": "2026-10-11T15:34:10.536Z",
+  "base": "http://127.0.0.1:8048",
   "results": [
     {
       "name": "first-visit",
       "ok": true,
-      "ms": 5697,
+      "ms": 2919,
       "errors": [],
       "note": "coach and best move on, warnings and highlights off; no eval bar, timeline, tabs or engine odds; the move list with grades and %; the best-move arrow"
     },
     {
       "name": "corner-blunder",
       "ok": true,
-      "ms": 3175,
+      "ms": 1695,
       "errors": [],
       "note": "Down from a 2048 snake: listed and graded \"Blunder · Takes your 2048 out of its corner\"; with Warn me the move is stopped and the coach's Right taken"
     },
     {
       "name": "edge-blunder",
       "ok": true,
-      "ms": 2995,
+      "ms": 1401,
       "errors": [],
       "note": "Down from a 4096 snake pulls the 2048 off the edge: \"Blunder\""
     },
     {
       "name": "random-keys",
       "ok": true,
-      "ms": 3720,
+      "ms": 2075,
       "errors": [],
       "note": "14 random keys from a 2048 position: 4 flagged (Blunder, Best, Questionable, Blunder, Good, Questionable); the first after 1 moves"
     },
     {
       "name": "free-stretch",
       "ok": true,
-      "ms": 2662,
+      "ms": 1012,
       "errors": [],
       "note": "Down from a 128 opening (leaves the corner): \"Best\""
     },
     {
       "name": "coach-toggles",
       "ok": true,
-      "ms": 4271,
+      "ms": 3019,
       "errors": [],
       "note": "Highlights: none before a move, then 1-3 fault cells after a blunder; Best move off hides the arrow and the list, not the grade; Explain adds reasons and the plan; Coach off folds the panel and Space/P do nothing; engine odds as cards behind a link"
     },
     {
       "name": "blocked-chain",
       "ok": true,
-      "ms": 2649,
+      "ms": 1253,
       "errors": [],
       "note": "Explain on a blocked chain: \"Chain blocked. The 128 in the top row, third column blocks your chain: merge it away or rebuild the chain around it.\""
     },
     {
       "name": "grades-only",
       "ok": true,
-      "ms": 2891,
+      "ms": 1639,
       "errors": [],
       "note": "coach off + Grades only: no list or arrow, Down graded \"Blunder\" with nothing else; Why? opens the coach with the reason and its move; a best move shows just \"Best\""
     },
     {
       "name": "keyboard-undo",
       "ok": true,
-      "ms": 5356,
+      "ms": 4108,
       "errors": [],
-      "note": "30 arrow moves + 5 coach moves (Space), Z x3 + X (at 32 of 34), the arrow plays the coach's move"
+      "note": "30 arrow moves + 5 coach moves (Space), Z x3 + X (at 33 of 35), the arrow plays the coach's move"
     },
     {
       "name": "swipe-phone",
       "ok": true,
-      "ms": 8048,
+      "ms": 6689,
       "errors": [],
       "note": "16 moves from 16 swipes"
     },
     {
       "name": "autoplay",
       "ok": true,
-      "ms": 32414,
+      "ms": 16832,
       "errors": [],
-      "note": "\"10\" plays 10 moves, \"100\" 100 more, \"Next tile\" stops by itself, P starts and Esc stops (now at move 143)"
+      "note": "\"10\" plays 10 moves, \"100\" 100 more, \"Next tile\" stops by itself, P starts and Esc stops (now at move 147)"
     },
     {
       "name": "branch-restore",
       "ok": true,
-      "ms": 24371,
+      "ms": 12879,
       "errors": [],
       "note": "100 coach moves, back 50, a different move from the list replaced 50; \"Undo\" in the toast restored them (50/100)"
     },
     {
       "name": "review",
       "ok": true,
-      "ms": 7566,
+      "ms": 5307,
       "errors": [],
       "note": "10 coach moves + 8 own keys: review counts {\"Blunder\":0,\"Questionable\":1,\"Good\":1,\"Best\":5} (the coach's left out); 1 flagged to revisit, a click jumps there"
     },
     {
       "name": "game-over",
       "ok": true,
-      "ms": 3527,
+      "ms": 2026,
       "errors": [],
       "note": "Right on a near-dead board ends the game; the game-over card offers Undo, Review, New game; Undo goes back"
     },
     {
       "name": "editor",
       "ok": true,
-      "ms": 5114,
+      "ms": 3254,
       "errors": [],
       "note": "the menu opens the editor on the board; tiles placed with the palette get the coach's move list; Play from here starts there (the old game restorable)"
     },
     {
       "name": "not-judged-block",
       "ok": true,
-      "ms": 2341,
+      "ms": 1006,
       "errors": [],
       "note": "an expert block formation: the moves are \"Not judged\""
     },
     {
       "name": "offline",
       "ok": true,
-      "ms": 3573,
+      "ms": 2441,
       "errors": [],
       "note": "4 moves offline; the panel says \"The coach is offline\"; autoplay stops with a message"
     },
     {
       "name": "persistence",
       "ok": true,
-      "ms": 27654,
+      "ms": 15484,
       "errors": [],
       "note": "a reload keeps the game (93/100); a v2 line with old facts opens; v2 Coach mode opens as Warn me without Best move"
     },
     {
       "name": "shortcuts-how-dark",
       "ok": true,
-      "ms": 7704,
+      "ms": 4288,
       "errors": [],
       "note": "? opens the shortcuts, Esc closes them; C toggles the coach; How on desktop and phone; dark phone with a blunder"
     }
